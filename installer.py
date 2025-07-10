@@ -11,7 +11,7 @@ def install():
     subprocess.run("curl -O https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/main.py", shell=True, check=True)
 
     os.chdir("keys")
-    subprocess.run("curl -O sources.json https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/default_sources.json", shell=True, check=True)
+    subprocess.run("curl -o sources.json https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/default_sources.json", shell=True, check=True)
     os.chdir("..")
 
     subprocess.run("pip install rich requests", shell=True, check=True)
