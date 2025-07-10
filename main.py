@@ -3,6 +3,7 @@ import requests
 import subprocess
 import os
 import argparse
+import zipfile
 from rich import print
 from rich.table import Table
 from rich.progress import Progress
@@ -11,6 +12,18 @@ from rich.console import Console
 KEY_FILE = "keys/main.json"
 SOURCES_FILE = "keys/sources.json"
 console = Console()
+
+def show_program_info(data):
+    table = Table(title="📄 Información del programa", header_style="bold green")
+    table.add_column("Campo", style="cyan", justify="right")
+    table.add_column("Valor", style="white")
+
+    table.add_row("Nombre", data.get("name", "Desconocido"))
+    table.add_row("Descripción", data.get("description", "Sin descripción"))
+    table.add_row("Makefile URL", data.get("makefile_url", "No especificado"))
+    table.add_row("ZIP URL", data.get("zip_url", "No especificado"))
+
+    console.print(table)
 
 def load_sources():
     if not os.path.exists(SOURCES_FILE):
@@ -84,27 +97,54 @@ def install_program_by_name(name, programs):
         return
 
     try:
+        # Descargar properties.json
         r = requests.get(program_url)
         r.raise_for_status()
         data = r.json()
-        name = data.get("name", "Programa sin nombre")
-        install_commands = data.get("install", [])
 
-        console.print(f"\n[bold green]Instalando {name}...[/bold green]\n")
+        show_program_info(data)
 
-        with Progress() as progress:
-            task = progress.add_task(f"[cyan]Ejecutando comandos", total=len(install_commands))
+        app_name = data.get("name", name)
+        makefile_url = data.get("makefile_url")
+        zip_url = data.get("zip_url")
 
-            for cmd in install_commands:
-                progress.console.print(f"[blue]>[/blue] {cmd}")
-                subprocess.run(cmd, shell=True, check=True)
-                progress.advance(task)
+        if not makefile_url or not zip_url:
+            console.print(f"[red]❌ Faltan campos en properties.json[/red]")
+            return
 
-        console.print(f"\n[bold green]✅ Instalación completada[/bold green]")
+        # Crear directorio apps/<app_name>
+        app_dir = os.path.join("apps", app_name)
+        os.makedirs(app_dir, exist_ok=True)
+
+        # Descargar Makefile
+        makefile_path = os.path.join(app_dir, "Makefile")
+        with requests.get(makefile_url, stream=True) as r:
+            r.raise_for_status()
+            with open(makefile_path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+        # Descargar .zip
+        zip_path = os.path.join(app_dir, "archive.zip")
+        with requests.get(zip_url, stream=True) as r:
+            r.raise_for_status()
+            with open(zip_path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+        # Extraer .zip
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(app_dir)
+
+        # Ejecutar Makefile usando el binario de make en lib/
+        console.print(f"[cyan]🔧 Ejecutando Makefile para {app_name}...[/cyan]")
+        make_binary = os.path.abspath("lib/make")
+        subprocess.run([make_binary, "-C", app_dir], check=True)
+
+        console.print(f"\n[bold green]✅ {app_name} instalado correctamente[/bold green]")
 
     except Exception as e:
-        console.print(f"[red]Error al instalar:[/red] {e}")
-
+        console.print(f"[red]Error durante la instalación:[/red] {e}")
 def main():
     parser = argparse.ArgumentParser(description="Tienda de scripts en Python")
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")

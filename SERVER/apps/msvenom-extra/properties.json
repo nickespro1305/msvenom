@@ -1,7 +1,6 @@
 {
   "name": "msvenom-extra",
-  "description": "extra utility for msvenom",
-  "author": "s7lver",
-  "version": "0.1",
-  "install": ["echo 'Instalando...'"]
+  "description": "extra funcionality for msvenom",
+  "makefile_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Makefile",
+  "zip_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Source.zip"
 }
