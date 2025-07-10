@@ -1,4 +1,4 @@
 {
-  "test": "",
-  "msvenom-extra": ""
+  "test": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/test/properties.json",
+  "msvenom-extra": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/properties.json"
 }

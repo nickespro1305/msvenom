@@ -1,0 +1,7 @@
+{
+  "name": "msvenom-extra",
+  "description": "extra utility for msvenom",
+  "author": "s7lver",
+  "version": "0.1",
+  "install": ["echo 'Instalando...'"]
+}
