@@ -16,15 +16,18 @@ SOURCES_FILE = "keys/sources.json"
 console = Console()
 
 def crear_acceso_directo(nombre_app: str, ruta_app: str, destino: str):
+    script_path = os.path.abspath(ruta_app)
+
     shell = win32com.client.Dispatch("WScript.Shell")
-    acceso = shell.CreateShortcut(os.path.join(destino, f"{nombre_app}.lnk"))
-    
-    # Ejecutar el script con python.exe
-    acceso.TargetPath = "python.exe"
-    acceso.Arguments = f'"{os.path.abspath(ruta_app)}"'
-    acceso.WorkingDirectory = os.path.dirname(os.path.abspath(ruta_app))
-    acceso.IconLocation = "python.exe"
-    acceso.Save()
+    shortcut_path = os.path.join(destino, f"{nombre_app}.lnk")
+    shortcut = shell.CreateShortcut(shortcut_path)
+
+    # Ejecutar cmd.exe con /k para mantener la consola abierta
+    shortcut.TargetPath = "cmd.exe"
+    shortcut.Arguments = f'/k python "{script_path}"'
+    shortcut.WorkingDirectory = os.path.dirname(script_path)
+    shortcut.IconLocation = "python.exe"
+    shortcut.Save()
 
 def show_program_info(data):
     table = Table(title="📄 Información del programa", header_style="bold green")
