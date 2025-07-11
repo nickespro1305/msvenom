@@ -11,9 +11,9 @@ unzip:
 
 install:
 	@echo "📥 Instalando dependencias..."
-	@pip install -r extracted/requirements.txt
+	@pip install -r requirements.txt
 
 rename:
 	@echo "🔄 Renombrando main.py a $(APP_NAME)..."
-	@move extracted/main.py $(APP_NAME).py
+	@move main.py $(APP_NAME).py
 	@echo "✅ Instalación completada: ejecuta './$(APP_NAME)' para iniciar"
