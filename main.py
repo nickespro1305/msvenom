@@ -4,14 +4,24 @@ import subprocess
 import os
 import argparse
 import zipfile
+import win32com.client
 from rich import print
 from rich.table import Table
 from rich.progress import Progress
 from rich.console import Console
 
+
 KEY_FILE = "keys/main.json"
 SOURCES_FILE = "keys/sources.json"
 console = Console()
+
+def crear_acceso_directo(nombre_app: str, ruta_app: str, destino: str):
+    shell = win32com.client.Dispatch("WScript.Shell")
+    atajo = shell.CreateShortcut(os.path.join(destino, f"{nombre_app}.lnk"))
+    atajo.TargetPath = f"{os.path.abspath(ruta_app)}"
+    atajo.WorkingDirectory = os.path.dirname(os.path.abspath(ruta_app))
+    atajo.IconLocation = "python.exe"
+    atajo.Save()
 
 def show_program_info(data):
     table = Table(title="📄 Información del programa", header_style="bold green")
@@ -142,6 +152,17 @@ def install_program_by_name(name, programs):
         subprocess.run([make_binary, "-C", app_dir], check=True)
 
         console.print(f"\n[bold green]✅ {app_name} instalado correctamente[/bold green]")
+        
+        shortcut_name = app_name  # sin .py
+        app_script = os.path.join(app_dir, f"{app_name}.py")
+        shortcut_destino = "apps"
+
+        if os.path.exists(app_script):
+            crear_acceso_directo(shortcut_name, app_script, shortcut_destino)
+            console.print(f"[blue]📎 Acceso directo creado:[/blue] apps/{shortcut_name}.lnk")
+        else:
+            console.print(f"[yellow]⚠️ No se creó acceso directo porque no se encontró {app_script}[/yellow]")
+
 
     except Exception as e:
         console.print(f"[red]Error durante la instalación:[/red] {e}")
@@ -149,6 +170,7 @@ def main():
     parser = argparse.ArgumentParser(description="Tienda de scripts en Python")
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
     parser.add_argument("--install", type=str, help="Instalar un paquete por nombre")
+    parser.add_argument("--run", type=str, help="Ejecuta una app instalada por nombre")
 
     args = parser.parse_args()
 
@@ -173,7 +195,16 @@ def main():
             return
         install_program_by_name(args.install, programs)
         return
+    
+    if args.run:
+        shortcut_path = os.path.join("apps", f"{args.run}.lnk")
+        if not os.path.exists(shortcut_path):
+            console.print(f"[red]❌ No se encontró el acceso directo 'apps/{args.run}.lnk'[/red]")
+            return
 
+        console.print(f"[green]▶ Ejecutando {args.run}...[/green]")
+        subprocess.run(["cmd", "/c", shortcut_path])
+        return
     # Si no se pasa ningún argumento
     parser.print_help()
 
