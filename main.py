@@ -17,11 +17,14 @@ console = Console()
 
 def crear_acceso_directo(nombre_app: str, ruta_app: str, destino: str):
     shell = win32com.client.Dispatch("WScript.Shell")
-    atajo = shell.CreateShortcut(os.path.join(destino, f"{nombre_app}.lnk"))
-    atajo.TargetPath = f"{os.path.abspath(ruta_app)}"
-    atajo.WorkingDirectory = os.path.dirname(os.path.abspath(ruta_app))
-    atajo.IconLocation = "python.exe"
-    atajo.Save()
+    acceso = shell.CreateShortcut(os.path.join(destino, f"{nombre_app}.lnk"))
+    
+    # Ejecutar el script con python.exe
+    acceso.TargetPath = "python.exe"
+    acceso.Arguments = f'"{os.path.abspath(ruta_app)}"'
+    acceso.WorkingDirectory = os.path.dirname(os.path.abspath(ruta_app))
+    acceso.IconLocation = "python.exe"
+    acceso.Save()
 
 def show_program_info(data):
     table = Table(title="📄 Información del programa", header_style="bold green")
@@ -152,7 +155,7 @@ def install_program_by_name(name, programs):
         subprocess.run([make_binary, "-C", app_dir], check=True)
 
         console.print(f"\n[bold green]✅ {app_name} instalado correctamente[/bold green]")
-        
+
         shortcut_name = app_name  # sin .py
         app_script = os.path.join(app_dir, f"{app_name}.py")
         shortcut_destino = "apps"
