@@ -25,7 +25,7 @@ def install():
     os.chdir("..")
     os.chdir("..")
 
-    subprocess.run("pip install rich requests pywin32", shell=True, check=True)
+    subprocess.run("pip install rich requests pywin32 nuitka", shell=True, check=True)
 
     print("instalacion completada")
     return

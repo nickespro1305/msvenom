@@ -15,6 +15,27 @@ KEY_FILE = "keys/main.json"
 SOURCES_FILE = "keys/sources.json"
 console = Console()
 
+def build_program(app_name):
+    app_dir = os.path.join("apps", app_name)
+    makefile_path = os.path.join(app_dir, "Makefile")
+
+    if not os.path.exists(makefile_path):
+        console.print(f"[red]❌ No se encontró el Makefile para '{app_name}' en {app_dir}[/red]")
+        return
+
+    console.print(f"[cyan]📦 Generando ejecutable y exportando con Makefile...[/cyan]")
+    try:
+        make_binary = os.path.abspath("lib/make/bin/make")
+        subprocess.run([make_binary, "-C", app_dir, "package"], check=True)
+        zip_output = os.path.join("exported", f"{app_name}.zip")
+        if os.path.exists(zip_output):
+            console.print(f"[bold green]✅ Paquete compilado y exportado correctamente: {zip_output}[/bold green]")
+        else:
+            console.print(f"[yellow]⚠️ La exportación no generó {zip_output}[/yellow]")
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]💥 Falló la ejecución del Makefile:[/red] {e}")
+
+
 def crear_acceso_directo(nombre_app: str, ruta_app: str, destino: str):
     script_path = os.path.abspath(ruta_app)
 
@@ -177,6 +198,7 @@ def main():
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
     parser.add_argument("--install", type=str, help="Instalar un paquete por nombre")
     parser.add_argument("--run", type=str, help="Ejecuta una app instalada por nombre")
+    parser.add_argument("--build", type=str, help="Compilar un paquete instalado a .exe")
 
     args = parser.parse_args()
 
@@ -210,6 +232,10 @@ def main():
 
         console.print(f"[green]▶ Ejecutando {args.run}...[/green]")
         subprocess.run(["cmd", "/c", shortcut_path])
+        return
+    
+    if args.build:
+        build_program(args.build)
         return
     # Si no se pasa ningún argumento
     parser.print_help()
