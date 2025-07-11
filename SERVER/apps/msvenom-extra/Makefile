@@ -7,7 +7,7 @@ prepare:
 
 unzip:
 	@echo "📦 Descomprimiendo Source.zip..."
-	@tar -xf Source.zip
+	@powershell -Command "Expand-Archive -Force Source.zip -DestinationPath '.'"
 
 install:
 	@echo "📥 Instalando dependencias..."
@@ -15,5 +15,5 @@ install:
 
 rename:
 	@echo "🔄 Renombrando main.py a $(APP_NAME)..."
-	@mv extracted/main.py $(APP_NAME).py
+	@move extracted/main.py $(APP_NAME).py
 	@echo "✅ Instalación completada: ejecuta './$(APP_NAME)' para iniciar"
