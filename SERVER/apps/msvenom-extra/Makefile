@@ -15,5 +15,5 @@ install:
 
 rename:
 	@echo "🔄 Renombrando main.py a $(APP_NAME)..."
-	@move main.py $(APP_NAME).py
+	@cmd /c move /Y extracted\main.py $(APP_NAME).py
 	@echo "✅ Instalación completada: ejecuta './$(APP_NAME)' para iniciar"
