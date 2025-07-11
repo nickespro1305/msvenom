@@ -125,7 +125,7 @@ def install_program_by_name(name, programs):
                     f.write(chunk)
 
         # Descargar .zip
-        zip_path = os.path.join(app_dir, "archive.zip")
+        zip_path = os.path.join(app_dir, "Source.zip")
         with requests.get(zip_url, stream=True) as r:
             r.raise_for_status()
             with open(zip_path, "wb") as f:
