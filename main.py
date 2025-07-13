@@ -209,6 +209,19 @@ def main():
 
     args = parser.parse_args()
 
+    # Leer distribución desde el archivo .env
+    current_distro = None
+    if os.path.exists(".env"):
+        with open(".env", "r") as env_file:
+            for line in env_file:
+                if line.strip().startswith("DISTRO="):
+                    current_distro = line.strip().split("=")[1].lower()
+                    break
+
+    if not current_distro:
+        console.print("[red]❌ No se encontró la variable DISTRO en el archivo .env[/red]")
+        return
+
     if args.update:
         sources = load_sources()
         if not sources:

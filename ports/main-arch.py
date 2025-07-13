@@ -15,16 +15,6 @@ KEY_FILE = "keys/main.json"
 SOURCES_FILE = "keys/sources.json"
 console = Console()
 
-def get_current_distro():
-    try:
-        with open(".env", "r") as f:
-            for line in f:
-                if line.startswith("DISTRO="):
-                    return line.strip().split("=")[1].lower()
-    except FileNotFoundError:
-        console.print("[red]❌ Archivo .env no encontrado. Crea uno con DISTRO=linux o DISTRO=windows[/red]")
-    return None
-
 def build_program(app_name):
     app_dir = os.path.join("apps", app_name)
     makefile_path = os.path.join(app_dir, "Makefile")
@@ -215,13 +205,23 @@ def install_program_by_name(name, programs, current_distro):
     except Exception as e:
         console.print(f"[red]Error durante la instalación:[/red] {e}")
 def main():
-    
-
     parser = argparse.ArgumentParser(description="Tienda de scripts en Python")
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
     parser.add_argument("--install", type=str, help="Instalar un paquete por nombre")
     parser.add_argument("--run", type=str, help="Ejecuta una app instalada por nombre")
     parser.add_argument("--build", type=str, help="Compilar un paquete instalado a .exe")
+
+    current_distro = None
+    if os.path.exists(".env"):
+        with open(".env", "r") as env_file:
+            for line in env_file:
+                if line.strip().startswith("DISTRO="):
+                    current_distro = line.strip().split("=")[1].lower()
+                    break
+
+    if not current_distro:
+        console.print("[red]❌ No se encontró la variable DISTRO en el archivo .env[/red]")
+        return
 
     args = parser.parse_args()
 
@@ -238,16 +238,13 @@ def main():
         return
 
     if args.install:
-        current_distro = get_current_distro()
-            if not current_distro:
-            return
         base_url = load_key()
         if not base_url:
             return
         programs = get_programs(base_url)
         if not programs:
             return
-        install_program_by_name(args.install, programs, current_distros)
+        install_program_by_name(args.install, programs, current_distro)
         return
     
     if args.run:
