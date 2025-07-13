@@ -139,7 +139,7 @@ def show_programs(programs):
 
     console.print(table)
 
-def install_program_by_name(name, programs):
+def install_program_by_name(name, programs, current_distro):
     if name not in programs:
         console.print(f"[red]❌ No se encontró el programa '{name}'[/red]")
         return
@@ -247,7 +247,7 @@ def main():
         programs = get_programs(base_url)
         if not programs:
             return
-        install_program_by_name(args.install, programs)
+        install_program_by_name(args.install, programs, current_distros)
         return
     
     if args.run:
