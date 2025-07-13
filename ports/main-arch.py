@@ -6,7 +6,6 @@ import subprocess
 import os
 import argparse
 import zipfile
-import win32com.client
 from rich import print
 from rich.table import Table
 from rich.progress import Progress
@@ -15,6 +14,16 @@ from rich.console import Console
 KEY_FILE = "keys/main.json"
 SOURCES_FILE = "keys/sources.json"
 console = Console()
+
+def get_current_distro():
+    try:
+        with open(".env", "r") as f:
+            for line in f:
+                if line.startswith("DISTRO="):
+                    return line.strip().split("=")[1].lower()
+    except FileNotFoundError:
+        console.print("[red]❌ Archivo .env no encontrado. Crea uno con DISTRO=linux o DISTRO=windows[/red]")
+    return None
 
 def build_program(app_name):
     app_dir = os.path.join("apps", app_name)
@@ -152,6 +161,12 @@ def install_program_by_name(name, programs):
         makefile_url = data.get("makefile_url")
         zip_url = data.get("zip_url")
 
+        plugin_distro = data.get("target", "any").lower()
+        if plugin_distro != "any" and plugin_distro != current_distro:
+            console.print(f"[red]❌ Este paquete solo es compatible con '{plugin_distro}', pero estás en '{current_distro}'[/red]")
+            return
+
+
         if not makefile_url or not zip_url:
             console.print(f"[red]❌ Faltan campos en properties.json[/red]")
             return
@@ -200,6 +215,10 @@ def install_program_by_name(name, programs):
     except Exception as e:
         console.print(f"[red]Error durante la instalación:[/red] {e}")
 def main():
+    current_distro = get_current_distro()
+    if not current_distro:
+        return
+
     parser = argparse.ArgumentParser(description="Tienda de scripts en Python")
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
     parser.add_argument("--install", type=str, help="Instalar un paquete por nombre")

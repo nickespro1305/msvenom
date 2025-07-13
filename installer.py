@@ -3,7 +3,7 @@ import os
 
 def archinstall():
     subprocess.run("sudo pacman -Syu --noconfirm", shell=True, check=True)
-    subprocess.run("sudo pacman -S python3 python-pip make  --noconfirm", shell=True, check=True)
+    subprocess.run("sudo pacman -S python3 python-pip make patchelf --noconfirm", shell=True, check=True)
 
     os.mkdir("msvenom")
     os.chdir("msvenom")
@@ -14,11 +14,16 @@ def archinstall():
 
     subprocess.run("curl -o main.py https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/ports/main-arch.py", shell=True, check=True)
 
+    subprocess.run("curl -o run.sh https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/ports/run-arch.sh", shell=True, check=True)
+
+    subprocess.run("chmod +x main.py", shell=True, check=True)
+    subprocess.run("chmod +x run.sh", shell=True, check=True)
+
     os.chdir("keys")
     subprocess.run("curl -o sources.json https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/default_sources.json", shell=True, check=True)
     os.chdir("..")
 
-    subprocess.run("python3 -m venv venv && source venv/bin/activate && pip install rich requests pywin32 nuitka", shell=True, check=True)
+    subprocess.run("python3 -m venv venv && source venv/bin/activate && pip install rich requests nuitka", shell=True, check=True)
 
     print("instalacion completada")
     return

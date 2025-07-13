@@ -2,5 +2,6 @@
   "name": "msvenom-extra",
   "description": "extra funcionality for msvenom",
   "makefile_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Makefile",
-  "zip_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Source.zip"
+  "zip_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Source.zip",
+  "target": "windows"
 }
