@@ -145,6 +145,11 @@ def install_program_by_name(name, programs):
         makefile_url = data.get("makefile_url")
         zip_url = data.get("zip_url")
 
+        plugin_distro = data.get("target", "any").lower()
+        if plugin_distro != "any" and plugin_distro != current_distro:
+            console.print(f"[red]❌ Este paquete solo es compatible con '{plugin_distro}', pero estás en '{current_distro}'[/red]")
+            return
+
         if not makefile_url or not zip_url:
             console.print(f"[red]❌ Faltan campos en properties.json[/red]")
             return
@@ -194,6 +199,8 @@ def install_program_by_name(name, programs):
     except Exception as e:
         console.print(f"[red]Error durante la instalación:[/red] {e}")
 def main():
+    
+
     parser = argparse.ArgumentParser(description="Tienda de scripts en Python")
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
     parser.add_argument("--install", type=str, help="Instalar un paquete por nombre")
@@ -215,6 +222,9 @@ def main():
         return
 
     if args.install:
+        current_distro = get_current_distro()
+        if not current_distro:
+            return
         base_url = load_key()
         if not base_url:
             return

@@ -215,9 +215,7 @@ def install_program_by_name(name, programs):
     except Exception as e:
         console.print(f"[red]Error durante la instalación:[/red] {e}")
 def main():
-    current_distro = get_current_distro()
-    if not current_distro:
-        return
+    
 
     parser = argparse.ArgumentParser(description="Tienda de scripts en Python")
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
@@ -240,6 +238,9 @@ def main():
         return
 
     if args.install:
+        current_distro = get_current_distro()
+            if not current_distro:
+            return
         base_url = load_key()
         if not base_url:
             return
