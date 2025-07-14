@@ -2,26 +2,38 @@ from rich import print
 import subprocess
 import argparse
 import os
-
-parser = argparse.ArgumentParser(description="msvenom developer toolset for plugins")
-parser.add_argument("setup", action="store_true", help="setup a new msvenom plugin project")
-
-args = parser.parse_args()
+import sys
 
 def setup():
-    print("welcome to the project setup tool, in what directory you want to start a project? (use . for create a project in the current directory)")
-    project_path = input("[+]")
+    print("[bold green]Welcome to the project setup tool[/bold green]")
+    print("In what directory do you want to start a project? (use `.` for the current directory)")
+    project_path = input("[+] ")
 
-    print("and what will be the plugin name?")
-    project_name = input("[+]")
+    print("And what will be the plugin name?")
+    project_name = input("[+] ")
 
-    print("creating your project, please wait...")
-    os.chdir(project_path)
-    os.mkdir(project_name)
+    print("Creating your project, please wait...")
+    try:
+        os.chdir(project_path)
+        os.mkdir(project_name)
+        os.chdir(project_name)
 
-    os.chdir(project_name)
+        # Aquí podrías copiar los archivos base:
+        # subprocess.run("cp /ruta/origen/Makefile .", shell=True)
+        # subprocess.run("cp /ruta/origen/properties.json .", shell=True)
 
-    # copia del directorio donde esta instalado el plugin hacia el projecto los archivos de ejemplo de properties.json y de Makefile
-    # subprocess.run("", shell=True, check=True)
+        print(f"[green]✅ Project '{project_name}' created successfully in '{os.getcwd()}'[/green]")
+    except Exception as e:
+        print(f"[red]❌ Error creating project:[/red] {e}")
 
-print(args)
+def main():
+    parser = argparse.ArgumentParser(description="msvenom developer toolset for plugins")
+    parser.add_argument("mode", choices=["setup"], help="Mode to run: 'setup' for project creation")
+
+    args = parser.parse_args()
+
+    if args.mode == "setup":
+        setup()
+
+if __name__ == "__main__":
+    main()
