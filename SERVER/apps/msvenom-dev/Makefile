@@ -10,7 +10,7 @@ prepare:
 
 unzip:
 	@echo "📦 Descomprimiendo $(SOURCE_ZIP)..."
-	@unzip $(SOURCE_ZIP) -d .
+	@unzip -j $(SOURCE_ZIP) -d .
 
 install:
 	@echo "📥 Instalando dependencias..."
