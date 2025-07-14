@@ -18,9 +18,17 @@ def setup():
         os.mkdir(project_name)
         os.chdir(project_name)
 
-        # Aquí podrías copiar los archivos base:
-        # subprocess.run("cp /ruta/origen/Makefile .", shell=True)
-        # subprocess.run("cp /ruta/origen/properties.json .", shell=True)
+         # Ruta al directorio example dentro del plugin instalado
+        plugin_example_dir = os.path.join("..", "..", "apps", "msvenom-dev", "example")
+
+        # Archivos a copiar
+        for filename in ["Makefile", "properties.json"]:
+            src = os.path.join(plugin_example_dir, filename)
+            if os.path.exists(src):
+                shutil.copy2(src, ".")
+                print(f"[green]✅ Copiado {filename}[/green]")
+            else:
+                print(f"[yellow]⚠️ No se encontró {filename} en {plugin_example_dir}[/yellow]")
 
         print(f"[green]✅ Project '{project_name}' created successfully in '{os.getcwd()}'[/green]")
     except Exception as e:
