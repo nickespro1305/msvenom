@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 
+
 def setup():
     print("[bold green]Welcome to the project setup tool[/bold green]")
     print("In what directory do you want to start a project? (use `.` for the current directory)")
@@ -14,23 +15,31 @@ def setup():
 
     print("Creating your project, please wait...")
     try:
-        os.chdir(project_path)
-        os.mkdir(project_name)
-        os.chdir(project_name)
+        # Calculamos ruta absoluta del directorio destino
+        target_dir = os.path.abspath(os.path.join(project_path, project_name))
+        os.makedirs(target_dir, exist_ok=True)
 
-         # Ruta al directorio example dentro del plugin instalado
-        plugin_example_dir = os.path.join("..", "..", "apps", "msvenom-dev", "example")
+        # Obtenemos la ruta absoluta del script que se está ejecutando
+        script_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Archivos a copiar
+        # Ruta absoluta a la carpeta example dentro del plugin (relativa al script)
+        plugin_example_dir = os.path.join(script_dir, "example")
+
+        if not os.path.isdir(plugin_example_dir):
+            print(f"[red]❌ No se encontró la carpeta 'example' en {plugin_example_dir}[/red]")
+            return
+
+        # Copiar archivos Makefile y properties.json desde example al proyecto nuevo
         for filename in ["Makefile", "properties.json"]:
             src = os.path.join(plugin_example_dir, filename)
-            if os.path.exists(src):
-                shutil.copy2(src, ".")
-                print(f"[green]✅ Copiado {filename}[/green]")
+            dst = os.path.join(target_dir, filename)
+            if os.path.isfile(src):
+                shutil.copy2(src, dst)
+                print(f"[green]✅ Copiado {filename} a {target_dir}[/green]")
             else:
                 print(f"[yellow]⚠️ No se encontró {filename} en {plugin_example_dir}[/yellow]")
 
-        print(f"[green]✅ Project '{project_name}' created successfully in '{os.getcwd()}'[/green]")
+        print(f"[green]✅ Project '{project_name}' created successfully in '{target_dir}'[/green]")
     except Exception as e:
         print(f"[red]❌ Error creating project:[/red] {e}")
 
