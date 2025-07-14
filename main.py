@@ -205,6 +205,7 @@ def main():
     parser.add_argument("--update", action="store_true", help="Actualizar key.json desde sources.json")
     parser.add_argument("--install", type=str, help="Instalar un paquete por nombre")
     parser.add_argument("--run", type=str, help="Ejecuta una app instalada por nombre")
+    parser.add_argument("-p", "--params", nargs='*', help="Parámetros para pasar al script")
     parser.add_argument("--build", type=str, help="Compilar un paquete instalado a .exe")
 
     args = parser.parse_args()
@@ -248,14 +249,22 @@ def main():
         return
     
     if args.run:
-        shortcut_path = os.path.join("apps", f"{args.run}.lnk")
-        if not os.path.exists(shortcut_path):
-            console.print(f"[red]❌ No se encontró el acceso directo 'apps/{args.run}.lnk'[/red]")
+        shortcut_path = os.path.join("apps", f"{args.run}.desktop")
+        app_dir = os.path.join("apps", args.run)
+        app_script = os.path.join(app_dir, f"{args.run}.py")
+
+        if not os.path.exists(app_script):
+            console.print(f"[red]❌ No se encontró el script '{app_script}'[/red]")
             return
 
+        command = ["python3", app_script]
+        if args.params:
+            command.extend(args.params)
+
         console.print(f"[green]▶ Ejecutando {args.run}...[/green]")
-        subprocess.run(["cmd", "/c", shortcut_path])
+        subprocess.run(command)
         return
+
     
     if args.build:
         build_program(args.build)
