@@ -1,7 +1,7 @@
 {
   "name": "msvenom-dev",
   "description": "extra funcionality for msvenom",
-  "makefile_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Makefile",
-  "zip_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-extra/Source.zip",
+  "makefile_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-dev/Makefile",
+  "zip_url": "https://raw.githubusercontent.com/nickespro1305/msvenom/refs/heads/main/SERVER/apps/msvenom-dev/Source.zip",
   "target": "linux"
 }

@@ -3,7 +3,7 @@ import os
 
 def archinstall():
     subprocess.run("sudo pacman -Syu --noconfirm", shell=True, check=True)
-    subprocess.run("sudo pacman -S python3 python-pip make patchelf --noconfirm", shell=True, check=True)
+    subprocess.run("sudo pacman -S python3 python-pip make patchelf unzip --noconfirm", shell=True, check=True)
 
     os.mkdir("msvenom")
     os.chdir("msvenom")
