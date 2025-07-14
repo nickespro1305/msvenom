@@ -187,7 +187,7 @@ def install_program_by_name(name, programs, current_distro):
 
         # Ejecutar Makefile usando el binario de make en lib/
         console.print(f"[cyan]🔧 Ejecutando Makefile para {app_name}...[/cyan]")
-        subprocess.run(["make", "-C", app_dir, "package"], check=True)
+        subprocess.run(["make", "-C", app_dir], check=True)
 
         console.print(f"\n[bold green]✅ {app_name} instalado correctamente[/bold green]")
 
